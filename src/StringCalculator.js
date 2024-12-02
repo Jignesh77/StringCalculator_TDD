@@ -3,29 +3,33 @@ export const add = (numbers) => {
         return 0;
     }
 
+    const { delimiter, cleanedNumbers } = parseInput(numbers);
+
+    const parts = cleanedNumbers.split(delimiter).map((num) => parseInt(num, 10));
+
+    validateNegatives(parts);
+
+    return parts.reduce((sum, num) => sum + (isNaN(num) ? 0 : num), 0);
+};
+
+const parseInput = (numbers) => {
     let delimiter = ",";
+    let cleanedNumbers = numbers;
+
     if (numbers.startsWith("//")) {
-        // Extract the custom delimiter
         const parts = numbers.split("\n");
-        delimiter = parts[0].substring(2); // Get the delimiter after "//"
-        numbers = parts.slice(1).join("\n"); // Remove the delimiter declaration
+        delimiter = parts[0].substring(2);
+        cleanedNumbers = parts.slice(1).join("\n");
     }
 
-    // Replace all newlines with the delimiter
-    numbers = numbers.replace(/\n/g, delimiter);
+    cleanedNumbers = cleanedNumbers.replace(/\n/g, delimiter);
 
-    // Split the string by the delimiter and convert to numbers
-    const parts = numbers.split(delimiter).map((num) => {
-        const parsed = parseInt(num, 10);
-        return isNaN(parsed) ? 0 : parsed; // Handle invalid numbers as 0
-    });
+    return { delimiter, cleanedNumbers };
+};
 
-    // Handle negatives
-    const negatives = parts.filter((num) => num < 0);
+const validateNegatives = (numbers) => {
+    const negatives = numbers.filter((num) => num < 0);
     if (negatives.length > 0) {
         throw new Error(`negative numbers not allowed: ${negatives.join(", ")}`);
     }
-
-    // Return the sum of the parts
-    return parts.reduce((sum, num) => sum + num, 0);
 };
