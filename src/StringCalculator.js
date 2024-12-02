@@ -20,6 +20,12 @@ export const add = (numbers) => {
         return isNaN(parsed) ? 0 : parsed; // Handle invalid numbers as 0
     });
 
+    // Handle negatives
+    const negatives = parts.filter((num) => num < 0);
+    if (negatives.length > 0) {
+        throw new Error(`negative numbers not allowed: ${negatives.join(", ")}`);
+    }
+
     // Return the sum of the parts
     return parts.reduce((sum, num) => sum + num, 0);
 };
